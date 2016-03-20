@@ -1,33 +1,105 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE EmptyDataDecls             #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE DeriveGeneric              #-}
 
 module Main where
 
-import Web.Scotty
-import Data.Aeson (FromJSON, ToJSON)
+import Web.Scotty.Trans
+import Data.Aeson (FromJSON, ToJSON, Value(Null)) 
 import GHC.Generics
 import Network.Wai.Middleware.Static
 import System.FilePath ((</>))
 import Paths_vtmtracker --for getDataDir
+import qualified Database.Persist as Persist
+import qualified Database.Persist.Sqlite as Sql
+import Database.Persist.Sqlite ((==.))
+import Database.Persist.TH
+import Control.Lens
+import Control.Monad.IO.Class  (liftIO, MonadIO)
+import Control.Monad.Trans.Class
+import Control.Monad.Trans.Identity
+import Control.Monad.Reader (MonadReader, ReaderT, asks, runReaderT)
+import Data.Text (pack, Text)
+import qualified Data.Text.Lazy as TL
+import Control.Monad.Logger (runNoLoggingT)
+import Network.HTTP.Types.Status (created201, internalServerError500, notFound404)
 
-data Vampire = Vampire { name :: String, blood :: Int, willpower :: Int, day :: Int, wakeupTime :: String } deriving (Show, Generic)
+share [mkPersist sqlSettings {mpsGenerateLenses = True, mpsPrefixFields = False}, mkMigrate "migrateAll"] [persistLowerCase|
+Vampire json
+    name String
+    blood Int
+    willpower Int
+    day Int
+    wakeupTime String
+    deriving Show Generic
+|]
 
-instance ToJSON Vampire
-instance FromJSON Vampire
+emptyVamp = Vampire "" 0 0 0 ""
 
-allVampires = [Vampire { name = "Testpire1", blood = 0, willpower = 0, day = 0, wakeupTime = "" },
-               Vampire { name = "Testpire2", blood = 0, willpower = 0, day = 0, wakeupTime = "" }
-              ]
+data Config = Config { 
+  pool :: Sql.ConnectionPool,
+  dataDir :: FilePath
+}
+
+newtype ConfigM a = ConfigM { 
+  runConfigM :: ReaderT Config IO a
+} deriving (Applicative, Functor, Monad, MonadIO, MonadReader Config)
+
+runDB q = do
+  p <- lift (asks pool)
+  liftIO $ Sql.runSqlPool q p
 
 main = do
     putStrLn "Starting Server..."
-    dataDir <- fmap (</> "static") getDataDir
-    scotty 3000 $ do
-        get "/hello" $ do
-            text "hello world!"
-        get "/users" $ do
-          json allVampires
-        middleware $ staticPolicy (noDots >-> addBase dataDir)
-        get "/" $ file (dataDir </> "index.html")
+    ddir <- fmap (</> "static") getDataDir
+    p <- runNoLoggingT $ Sql.createSqlitePool (pack $ ddir </> "database.sqlite") 8
+    let conf = Config { pool = p, dataDir = ddir }
 
+    flip runReaderT conf $ runIdentityT $ do
+      runDB $ Sql.runMigration migrateAll
+      --runDB $ Sql.insert $ emptyVamp & name .~ "Testpire1"
+      --runDB $ Sql.insert $ emptyVamp & name .~ "Testpire2"
 
+    let r m = runReaderT (runConfigM m) conf
+    scottyT 3000 r $ application ddir
+
+type Error = TL.Text
+
+application :: FilePath -> ScottyT Error ConfigM ()
+application dir = do 
+  get "/vampires" $ do
+    vamps <- runDB $ Sql.selectList [] []
+    json (vamps :: [Sql.Entity Vampire])
+  get "/vampire/:id" $ do
+    i <- param "id"
+    vamp <- runDB $ Sql.get (toKey i :: VampireId)
+    case vamp of
+      Just vamp -> json vamp
+      Nothing -> status notFound404 >> json Null
+  put "/vampire/:id" $ do
+    vamp <- jsonData
+    i <- param "id"
+    runDB $ Sql.repsert (toKey i :: VampireId) vamp
+    json vamp
+  post "/vampire" $ do
+    vamp <- jsonData
+    runDB $ Sql.insert (vamp :: Vampire)
+    json vamp
+  delete "/vampire/:id" $ do
+    i <- param "id"
+    runDB $ Sql.delete (toKey i :: VampireId)
+    json Null
+    
+    
+  middleware $ staticPolicy (noDots >-> addBase dir)
+  get "/" $ file (dir </> "index.html")
+
+toKey i = Sql.toSqlKey (fromIntegral (i :: Integer))

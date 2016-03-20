@@ -1,0 +1,66 @@
+span.blood {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid black;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(135deg);
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+@keyFrames bloodAnimate {
+  0%{background-position:0% 100%}
+  100%{background-position:100% 0%}
+}
+
+.blood-filled {
+  background: red;
+  background: linear-gradient(-135deg, #FF0000, #FF0000 50%, #FFFFFF 50%, #FFFFFF);
+  background-size: 200% 200%; 
+  animation: bloodAnimate 2s ease-out 1 forwards;
+}
+
+.blood-unfilled {
+  background: white;
+  background: linear-gradient(-135deg, #FF0000, #FF0000 50%, #FFFFFF 50%, #FFFFFF);
+  background-size: 200% 200%; 
+  animation: bloodAnimate 2s ease-out 1 reverse;
+  animation-fill-mode: both;
+}
+
+span.willpower {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid black;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+@keyFrames willpowerAnimate {
+  0% {background: white;}
+  100% {background: lime;}
+}
+
+.willpower-filled {
+  background: lime;
+  animation: willpowerAnimate 2s ease-out 1 forwards;
+}
+
+.willpower-unfilled {
+  background: white;
+  animation: willpowerAnimate 2s ease-out 1 reverse;
+}
+
+body {
+  background: red;
+  background: radial-gradient(red, black);
+  background-repeat: no-repeat;
+}
+
+.container {
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 20px;
+}

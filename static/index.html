@@ -13,6 +13,8 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/vampire.css" rel="stylesheet">
   </head>
 
   <body>
@@ -35,21 +37,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="js/bootstrap.min.js"></script>
-
-    <script>
-      $.getJSON("users", function(data) {
-        $("#vampireList").html("");
-        $.each(data, function(key, value) {
-          var s = "<li class=\"list-group-item\">";
-          s += "<h4>" + value.name + "</h4>";
-          s += "<div><strong>Blood:</strong> " + value.blood + "</div>";
-          s += "<div><strong>Willpower:</strong> " + value.willpower + "</div>";
-          s += "<div><strong>Wake Up:</strong> " + value.wakeupTime + "</div>";
-          s += "</li>";
-          $("#vampireList").append(s);
-        });
-      });
-    </script>
+    <script src="js/vampires.js"></script>
   </body>
 </html>
 

@@ -35,4 +35,13 @@ executable vtmtracker
                        scotty,
                        aeson,
                        wai-middleware-static,
-                       filepath
+                       filepath,
+                       persistent,
+                       persistent-sqlite,
+                       persistent-template,
+                       lens,
+                       transformers,
+                       mtl,
+                       text,
+                       monad-logger,
+                       http-types
