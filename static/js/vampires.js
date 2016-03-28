@@ -16,7 +16,7 @@
     this.needsUpdate = false;
     this.updating = false;
     this.updateRemote = function() {
-      v = this;
+      var v = this;
       if (!this.updating) {
         //Needs to do an ajax call
         this.updating = true;
@@ -78,13 +78,13 @@
         //Remove unfilled, add them to filled
         vamp.data[dataKey] = newCount;
         var n = newCount - oldCount;
-        cs = unfilledContainer.children().slice(0, n).detach();
+        var cs = unfilledContainer.children().slice(0, n).detach();
         cs.removeClass(className + "-unfilled").addClass(className + "-filled");
         filledContainer.append(cs);
       } else {
         vamp.data[dataKey] = newCount - 1;
         var n = oldCount - newCount + 1; //Because if we select an already-filled element, we want to get rid of it.
-        cs = filledContainer.children().slice(-n).detach();
+        var cs = filledContainer.children().slice(-n).detach();
         cs.removeClass(className + "-filled").addClass(className + "-unfilled");
         unfilledContainer.prepend(cs);
       } 
