@@ -42,7 +42,7 @@ Vampire json
     deriving Show Generic
 |]
 
-emptyVamp = Vampire "" 0 0 0 ""
+emptyVamp = Vampire "New Vampire" 0 0 0 ""
 
 data Config = Config { 
   pool :: Sql.ConnectionPool,
@@ -84,6 +84,10 @@ application dir = do
     case vamp of
       Just vamp -> json vamp
       Nothing -> status notFound404 >> json Null
+  get "/vampire" $ do
+    let vamp = emptyVamp
+    vamp <- runDB $ Sql.insertEntity (vamp :: Vampire)
+    json vamp
   put "/vampire/:id" $ do
     vamp <- jsonData
     i <- param "id"
@@ -91,8 +95,9 @@ application dir = do
     json vamp
   post "/vampire" $ do
     vamp <- jsonData
-    runDB $ Sql.insert (vamp :: Vampire)
-    json vamp
+    key <- runDB $ Sql.insert (vamp :: Vampire)
+    vamp <- runDB $ Sql.get key
+    json key
   delete "/vampire/:id" $ do
     i <- param "id"
     runDB $ Sql.delete (toKey i :: VampireId)
