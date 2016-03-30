@@ -53,16 +53,30 @@ span.willpower {
   animation: willpowerAnimate 2s ease-out 1 reverse;
 }
 
+html {
+  min-height: 100%;
+}
+
 body {
   background: red;
   background: radial-gradient(red, black);
   background-repeat: no-repeat;
+  min-height: 100%;
 }
 
 .container {
   background-color: white;
   border-radius: 10px;
-  margin-top: 20px;
+  min-height: 80vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  max-width: 800px;
+}
+
+.outerContainer {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
 }
 
 @keyFrames fadeOut {
