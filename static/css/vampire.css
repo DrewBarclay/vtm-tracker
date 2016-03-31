@@ -19,14 +19,14 @@ span.blood {
   background: red;
   background: linear-gradient(-135deg, #FF0000, #FF0000 50%, #FFFFFF 50%, #FFFFFF);
   background-size: 200% 200%; 
-  animation: bloodAnimate 2s ease-out 1 forwards;
+  animation: bloodAnimate 1s ease-out 1 forwards;
 }
 
 .blood-unfilled {
   background: white;
   background: linear-gradient(-135deg, #FF0000, #FF0000 50%, #FFFFFF 50%, #FFFFFF);
   background-size: 200% 200%; 
-  animation: bloodAnimate 2s ease-out 1 reverse;
+  animation: bloodAnimate 1s ease-out 1 reverse;
   animation-fill-mode: both;
 }
 
@@ -42,17 +42,17 @@ span.willpower {
 
 @keyFrames willpowerAnimate {
   0% {background: white;}
-  100% {background: lime;}
+  100% {background: #5555FF;}
 }
 
 .willpower-filled {
-  background: lime;
-  animation: willpowerAnimate 2s ease-out 1 forwards;
+  background: #5555FF;
+  animation: willpowerAnimate 1s ease-out 1 forwards;
 }
 
 .willpower-unfilled {
   background: white;
-  animation: willpowerAnimate 2s ease-out 1 reverse;
+  animation: willpowerAnimate 1s ease-out 1 reverse;
 }
 
 html {
