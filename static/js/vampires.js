@@ -1,18 +1,19 @@
 (function () {
   var blankVampireHtml = "" +
-    "<li class='list-group-item'>" +
-      "<div class='row'>" +
-        "<div class='col-md-3'><h4 class='name'></h4></div>" +
-        "<div class='col-md-8'>" + 
-          "<div class='bloodContainer'></div>" +
-          "<div class='willpowerContainer'></div>" +
-        "</div>" + 
-        "<div class='col-md-1'>" +
-          "<div class='saving'></div>" + 
-          "<button type='button' class='btn btn-xs btn-danger delete'>Delete</button>" + 
-        "</div>" +
-      "</div>" +
-    "</li>";
+    "<tr>" +
+      "<td><h4 class='name'></h4></td>" +
+      "<td>" + 
+        "<div class='bloodContainer'></div>" +
+        "<div class='willpowerContainer'></div>" +
+      "</td>" + 
+      "<td class='text-center'>" +
+          "<span class='saving glyphicon glyphicon-ok' /> " + 
+      "</td><td class='text-center'>" +
+          "<span class='glyphicon glyphicon-remove delete'></span>" + 
+      "</td>" +
+    "</td></tr>";
+
+  var rootNode = $("#vampireList tbody");
 
   var vampires = {};
 
@@ -54,7 +55,7 @@
       if (!this.updating) {
         //Needs to do an ajax call
         this.updating = true;
-        this.savingNode.html("Saving...");
+        this.savingNode.addClass("glyphicon-refresh spinning").removeClass("glyphicon-ok");
         $.ajax({
           type: "PUT",
           url: "vampire/" + v.data.id, 
@@ -67,7 +68,7 @@
               v.needsUpdate = false;
               v.updateRemote(); //Update again with new data.
             } else {
-              v.savingNode.html("Saved!");
+              v.savingNode.addClass("glyphicon-ok").removeClass("glyphicon-refresh spinning");
             }
           },
           error: function() {
@@ -82,7 +83,7 @@
   };
   
   var getVampire = function(element) {
-    return vampires[$(element).closest('li').attr('vampireId')];
+    return vampires[$(element).closest('tr').attr('vampireId')];
   }
 
   var makeClickableCounterElements = function(container, label, className, dataKey) {
@@ -101,7 +102,7 @@
   };
 
   var makeClickableCounterEvents = function(className, dataKey) {
-    $("#vampireList").on("click", "." + className, function(event) {
+    rootNode.on("click", "." + className, function(event) {
       var container = $(event.target).parent().parent();
       var filledContainer = container.children("." + className + "-filled-container");
       var unfilledContainer = container.children("." + className + "-unfilled-container");
@@ -136,7 +137,7 @@
   }
 
   var makeEditableNames = function() {
-    $("#vampireList").on("click", ".name", function(event) {
+    rootNode.on("click", ".name", function(event) {
       var vamp = getVampire(event.target);
       console.log(vamp);
       var container = $(event.target).parent();
@@ -145,33 +146,33 @@
       container.children().focus();
     });
 
-    $("#vampireList").on("keydown", ".name-edit", function(event) {
+    rootNode.on("keydown", ".name-edit", function(event) {
       if (event.which == 13) { //enter 
         saveEditedName(event);
       }
     });
 
-    $("#vampireList").on("blur", ".name-edit", function(event) {
+    rootNode.on("blur", ".name-edit", function(event) {
       saveEditedName(event);
     });
   };
 
   var makeDeleteEvents = function() {
-    $("#vampireList").on("click", ".delete", function(event) {
+    rootNode.on("click", ".delete", function(event) {
       if (confirm("Are you sure you want to delete this vampire?")) {
         var vamp = getVampire(event.target);
         vamp.deleteRemote();
         vamp.updateRemote = function() { }; //Disable in case of clicks while animating
-        $(event.target).closest("li").addClass("removed"); //For animation purposes
-        setTimeout(function() { $(event.target).closest("li").remove(); }, 500);
+        $(event.target).closest("tr").addClass("removed"); //For animation purposes
+        setTimeout(function() { $(event.target).closest("tr").remove(); }, 500);
       }
     });
   };
 
   var makeCreateEvent = function() {
     $(".create-button").on("click", function(event) {
-      $("#vampireList").append("<li class='list-group-item'>Creating...</li>");
-      var vn = $("#vampireList").children().last();
+      rootNode.append("<tr><td>Creating...</td></li>");
+      var vn = rootNode.children().last();
       $.getJSON("vampire", function(data) {
         new Vampire(data, vn);
       });
@@ -180,10 +181,10 @@
   
   //Init the DOM and get data
   $.getJSON("vampires", function(data) {
-    $("#vampireList").html("");
+    rootNode.html("");
     $.each(data, function(key, value) {
-      $("#vampireList").append("<li />");
-      var vn = $("#vampireList").children().last();
+      rootNode.append("<tr />");
+      var vn = rootNode.children().last();
       new Vampire(value, vn); //Handles the DOM too
     });
   });

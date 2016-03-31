@@ -24,6 +24,7 @@ data-files:
   static/fonts/*.woff2
   static/js/*.js
   static/js/*.min.js
+  static/imgs/*.png
   
   
 

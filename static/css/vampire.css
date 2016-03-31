@@ -7,6 +7,7 @@ span.blood {
   transform: rotate(135deg);
   margin-left: 1px;
   margin-right: 1px;
+  cursor: pointer;
 }
 
 @keyFrames bloodAnimate {
@@ -36,6 +37,7 @@ span.willpower {
   border: 1px solid black;
   margin-left: 1px;
   margin-right: 1px;
+  cursor: pointer;
 }
 
 @keyFrames willpowerAnimate {
@@ -71,12 +73,19 @@ body {
   margin-top: 5vh;
   margin-bottom: 5vh;
   max-width: 800px;
+  position: relative;
+  padding-bottom: 5vh;
 }
 
 .outerContainer {
   display: flex;
   width: 100%;
   min-height: 100vh;
+}
+
+.create-button {
+  position: absolute;
+  bottom: 10px;
 }
 
 @keyFrames fadeOut {
@@ -88,4 +97,46 @@ body {
 .removed {
   animation: fadeOut 500ms;
   opacity: 0;
+}
+
+.vampire-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#vampireList {
+  margin-bottom: 10px;
+}
+
+#vampireList > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.glyphicon.spinning {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.delete {
+  color: black;
+  cursor: pointer;
+}
+
+.delete:hover {
+  color: red;
+}
+
+.name {
+  color: black;
+  cursor: pointer;
+}
+
+.name:hover {
+  color: red;
 }
