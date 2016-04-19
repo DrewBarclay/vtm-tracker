@@ -75,6 +75,7 @@ body {
   max-width: 800px;
   position: relative;
   padding-bottom: 5vh;
+  box-shadow: 0px 0px 15px #333333;
 }
 
 .outerContainer {
@@ -89,14 +90,14 @@ body {
 }
 
 @keyFrames fadeOut {
-  0% {opacity: 1;}
-  50% {opacity: 0; transform: scale(1, 1);}
-  100% {transform: scale(0, 1);}
+  0% {max-height: 100px;}
+  100% {max-height: 0px;}
 }
 
 .removed {
-  animation: fadeOut 500ms;
-  opacity: 0;
+  animation: fadeOut 1000ms forwards;
+  max-height: 0px;
+  overflow: hidden;
 }
 
 .vampire-item {
@@ -134,9 +135,17 @@ body {
 
 .name {
   color: black;
+  font-size: large;
+}
+
+.name-normal {
   cursor: pointer;
 }
 
-.name:hover {
+.name-normal:hover {
   color: red;
+}
+
+.name-edit {
+
 }

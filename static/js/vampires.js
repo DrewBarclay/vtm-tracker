@@ -1,7 +1,7 @@
 (function () {
   var blankVampireHtml = "" +
     "<tr>" +
-      "<td><h4 class='name'></h4></td>" +
+      "<td><span class='name name-normal'></span></td>" +
       "<td>" + 
         "<div class='bloodContainer'></div>" +
         "<div class='willpowerContainer'></div>" +
@@ -131,17 +131,17 @@
   var saveEditedName = function(event) {
     var vamp = getVampire(event.target);
     var newName = $(event.target).val();
-    $(event.target).replaceWith("<h4 class='name'>" + newName + "</h4>");
+    $(event.target).replaceWith("<span class='name name-normal'>" + newName + "</span>");
     vamp.data.name = newName;
     vamp.updateRemote();
   }
 
   var makeEditableNames = function() {
-    rootNode.on("click", ".name", function(event) {
+    rootNode.on("click", ".name-normal", function(event) {
       var vamp = getVampire(event.target);
       console.log(vamp);
       var container = $(event.target).parent();
-      $(event.target).replaceWith("<input type='text' class='name-edit' />");
+      $(event.target).replaceWith("<input type='text' class='name name-edit' />");
       container.children().val(vamp.data.name);
       container.children().focus();
     });
@@ -164,14 +164,15 @@
         vamp.deleteRemote();
         vamp.updateRemote = function() { }; //Disable in case of clicks while animating
         $(event.target).closest("tr").addClass("removed"); //For animation purposes
-        setTimeout(function() { $(event.target).closest("tr").remove(); }, 500);
+        $(event.target).find("*").attr("disabled", "disabled");
+        setTimeout(function() { $(event.target).closest("tr").remove(); }, 1000);
       }
     });
   };
 
   var makeCreateEvent = function() {
     $(".create-button").on("click", function(event) {
-      rootNode.append("<tr><td>Creating...</td></li>");
+      rootNode.append("<tr><td></td><td><div class='text-center'><span class='glyphicon glyphicon-refresh spinning' /></div></td></tr>");
       var vn = rootNode.children().last();
       $.getJSON("vampire", function(data) {
         new Vampire(data, vn);
