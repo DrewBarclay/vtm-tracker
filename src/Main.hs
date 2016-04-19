@@ -36,13 +36,15 @@ share [mkPersist sqlSettings {mpsGenerateLenses = True, mpsPrefixFields = False}
 Vampire json
     name String
     blood Int
+    maxBlood Int
     willpower Int
-    day Int
-    wakeupTime String
+    maxWillpower Int
+    day String
+    notes String
     deriving Show Generic
 |]
 
-emptyVamp = Vampire "New Vampire" 0 0 0 ""
+emptyVamp = Vampire "New Vampire" 0 10 0 10 "" ""
 
 data Config = Config { 
   pool :: Sql.ConnectionPool,
@@ -60,6 +62,7 @@ runDB q = do
 main = do
     putStrLn "Starting Server..."
     ddir <- fmap (</> "static") getDataDir
+    putStrLn $ "Looking in directory " ++ ddir ++ "for files... "
     p <- runNoLoggingT $ Sql.createSqlitePool (pack $ ddir </> "database.sqlite") 8
     let conf = Config { pool = p, dataDir = ddir }
 

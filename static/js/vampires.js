@@ -5,6 +5,8 @@
       "<td>" + 
         "<div class='bloodContainer'></div>" +
         "<div class='willpowerContainer'></div>" +
+        "<div><strong>Day: </strong><input type='date' class='vampireDay' /></div>" +
+        "<div><strong>Notes: </strong><textarea class='vampireNotes' /></div>" + 
       "</td>" + 
       "<td class='text-center'>" +
           "<span class='saving glyphicon glyphicon-ok' /> " + 
@@ -35,6 +37,9 @@
     node.find(".name").html(data.name);
     makeClickableCounterElements(node.find(".bloodContainer"), 'Blood', 'blood', 'blood');
     makeClickableCounterElements(node.find(".willpowerContainer"), 'Willpower', 'willpower', 'willpower');
+    node.find('.vampireDay').val(data.day);
+    node.find('.vampireNotes').val(data.notes);
+    node.find('.vampireNotes').trigger("input"); //Resize
 
     //End setting up the DOM
 
@@ -195,4 +200,21 @@
   makeEditableNames();
   makeDeleteEvents();
   makeCreateEvent();
+  rootNode.on('change', '.vampireDay', function (event) {
+    var vamp = getVampire(event.target);
+    if (vamp.data.day != $(event.target).val()) {
+      vamp.data.day = $(event.target).val();
+      vamp.updateRemote();
+    }
+  });
+
+  //Set up auto-resizing textarea
+  rootNode.on('input', '.vampireNotes', function (event) {
+    $(this).outerHeight(12).outerHeight(this.scrollHeight + 6);
+    var vamp = getVampire(event.target);
+    if (vamp.data.notes != $(event.target).val()) { //In case we call .trigger('input') and no change
+      vamp.data.notes = $(event.target).val();
+      vamp.updateRemote();
+    }
+  }); 
 })();

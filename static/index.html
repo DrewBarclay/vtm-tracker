@@ -15,6 +15,14 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <link href="css/vampire.css" rel="stylesheet">
+
+    <!-- Polyfill -->
+    <script src="http://cdn.jsdelivr.net/webshim/1.15.10/polyfiller.js"></script>
+    <script>
+      webshims.setOptions('waitReady', false);
+      webshims.setOptions('forms-ext', {types: 'date', widgets: { openOnFocus: true }});
+      webshims.polyfill('forms forms-ext');
+    </script>
   </head>
 
   <body>
