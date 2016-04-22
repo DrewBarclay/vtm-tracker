@@ -1,58 +1,37 @@
 span.blood {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 1px solid black;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(135deg);
+  width: 20px;
+  height: 20px;
   margin-left: 1px;
   margin-right: 1px;
   cursor: pointer;
-}
-
-@keyFrames bloodAnimate {
-  0%{background-position:0% 100%}
-  100%{background-position:100% 0%}
+  background-size: contain;
 }
 
 .blood-filled {
-  background: red;
-  background: linear-gradient(-135deg, #FF0000, #FF0000 50%, #FFFFFF 50%, #FFFFFF);
-  background-size: 200% 200%; 
-  animation: bloodAnimate 1s ease-out 1 forwards;
+  background-image: url(/imgs/Blood.png);
 }
 
 .blood-unfilled {
-  background: white;
-  background: linear-gradient(-135deg, #FF0000, #FF0000 50%, #FFFFFF 50%, #FFFFFF);
-  background-size: 200% 200%; 
-  animation: bloodAnimate 1s ease-out 1 reverse;
-  animation-fill-mode: both;
+  background-image: url(/imgs/Blood-Empty.png);
 }
 
 span.willpower {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 1px solid black;
+  width: 20px;
+  height: 20px;
   margin-left: 1px;
   margin-right: 1px;
   cursor: pointer;
-}
-
-@keyFrames willpowerAnimate {
-  0% {background: white;}
-  100% {background: #5555FF;}
+  background-size: contain;
 }
 
 .willpower-filled {
-  background: #5555FF;
-  animation: willpowerAnimate 1s ease-out 1 forwards;
+  background-image: url(/imgs/Willpower.png);
 }
 
 .willpower-unfilled {
-  background: white;
-  animation: willpowerAnimate 1s ease-out 1 reverse;
+  background-image: url(/imgs/Willpower-Empty.png);
 }
 
 html {
