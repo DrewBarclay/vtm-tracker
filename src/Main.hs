@@ -62,7 +62,7 @@ runDB q = do
 main = do
     putStrLn "Starting Server..."
     ddir <- fmap (</> "static") getDataDir
-    putStrLn $ "Looking in directory " ++ ddir ++ "for files... "
+    putStrLn $ "Looking in directory " ++ ddir ++ " for files... "
     p <- runNoLoggingT $ Sql.createSqlitePool (pack $ ddir </> "database.sqlite") 8
     let conf = Config { pool = p, dataDir = ddir }
 

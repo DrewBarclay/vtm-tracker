@@ -3,10 +3,10 @@
     "<tr>" +
       "<td><span class='name name-normal'></span></td>" +
       "<td>" + 
-        "<div class='bloodContainer'></div>" +
-        "<div class='willpowerContainer'></div>" +
-        "<div><strong>Day: </strong><input type='date' class='vampireDay' /></div>" +
-        "<div><strong>Notes: </strong><textarea class='vampireNotes' /></div>" + 
+        "<div class='bloodContainer row'></div>" +
+        "<div class='willpowerContainer row'></div>" +
+        "<div class='row'><div class='col-md-3'><strong>Day: </strong></div><div class='col-md-5'><input type='date' class='vampireDay' /></div></div>" +
+        "<div class='row'><div class='col-md-3'><strong>Notes: </strong></div><div class='col-md-5'><textarea class='vampireNotes' /></div></div>" + 
       "</td>" + 
       "<td class='text-center'>" +
           "<span class='saving glyphicon glyphicon-ok' /> " + 
@@ -92,9 +92,9 @@
   }
 
   var makeClickableCounterElements = function(container, label, className, dataKey) {
-    container.html("<strong>" + label + ": </strong><span class='" + className + "-filled-container'></span><span class='" + className + "-unfilled-container'></span>");
-    var filledContainer = container.children("." + className + "-filled-container");
-    var unfilledContainer = container.children("." + className + "-unfilled-container");
+    container.html("<div class='col-md-3'><strong>" + label + ": </strong></div><div class='col-md-5'><span class='" + className + "-filled-container'></span><span class='" + className + "-unfilled-container'></span></div>");
+    var filledContainer = container.find("." + className + "-filled-container");
+    var unfilledContainer = container.find("." + className + "-unfilled-container");
     var vamp = getVampire(container);
     var counter = vamp.data[dataKey];
     var MAX = 10;
