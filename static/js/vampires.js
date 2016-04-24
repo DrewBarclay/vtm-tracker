@@ -204,8 +204,21 @@
   rootNode.on('change', '.vampireDay', function (event) {
     var vamp = getVampire(event.target);
     if (vamp.data.day != $(event.target).val()) {
+      var oldDate = moment(vamp.data.day, "YYYY-MM-DD");
+      var newDate = moment($(event.target).val(), "YYYY-MM-DD");
+      dd = newDate.diff(oldDate, 'days');
       vamp.data.day = $(event.target).val();
-      vamp.updateRemote();
+
+      if (!isNaN(dd) && dd > 0 && vamp.data.blood > 0 && confirm("Take away " + dd + " blood point(s)?")) {
+        var toFind = Math.max(0, vamp.data.blood - dd + 1);
+        $(event.target).closest("td").find(".blood").each(function() {
+          if ($(this).attr('num') == toFind) {
+            $(this).trigger('click');
+          }
+        });
+      } else {
+        vamp.updateRemote();
+      }
     }
   });
 
