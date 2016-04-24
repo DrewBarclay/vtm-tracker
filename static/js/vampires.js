@@ -41,6 +41,8 @@
     node.find('.vampireNotes').val(data.notes);
     node.find('.vampireNotes').trigger("input"); //Resize
 
+    node.updatePolyfill(); //remove this whenever firefox frickin' supports the date element
+
     //End setting up the DOM
 
     this.deleteRemote = function() {
@@ -77,7 +79,6 @@
             }
           },
           error: function() {
-            v.savingNode.html("Error saving! Trying again.");
             setTimeout(function() { v.updating = false; v.updateRemote(); }, 1000);
           }
         });
@@ -99,20 +100,20 @@
     var counter = vamp.data[dataKey];
     var MAX = 10;
     for (i = 1; i <= counter; i++) {
-      filledContainer.append("<span class='" + className + " " + className + "-filled' num='" + i + "'></span>");
+      filledContainer.append("<span class='" + className + " " + className + "-filled' num='" + i + "'><span /><span /></span>");
     }
     for (i = counter + 1; i <= MAX; i++) {
-      unfilledContainer.append("<span class='" + className + " " + className + "-unfilled' num='" + i + "'></span>");
+      unfilledContainer.append("<span class='" + className + " " + className + "-unfilled' num='" + i + "'><span /><span /></span>");
     }
   };
 
   var makeClickableCounterEvents = function(className, dataKey) {
     rootNode.on("click", "." + className, function(event) {
-      var container = $(event.target).parent().parent();
+      var container = $(event.currentTarget).parent().parent();
       var filledContainer = container.children("." + className + "-filled-container");
       var unfilledContainer = container.children("." + className + "-unfilled-container");
-      var vamp = getVampire(event.target);
-      var newCount = Number($(event.target).attr('num'));
+      var vamp = getVampire(event.currentTarget);
+      var newCount = Number($(event.currentTarget).attr('num'));
       var oldCount = vamp.data[dataKey];
       if (newCount > oldCount) {
         //Remove unfilled, add them to filled

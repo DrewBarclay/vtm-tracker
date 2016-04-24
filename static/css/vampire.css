@@ -1,39 +1,87 @@
-span.blood {
+@keyframes crossfade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.blood {
   display: inline-block;
   width: 20px;
   height: 20px;
   margin-left: 1px;
   margin-right: 1px;
   cursor: pointer;
+  position: relative; /* For the span child elements using position absolute */
+}
+
+.blood span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  animation: crossfade 1s forwards;
   background-size: contain;
 }
 
-.blood-filled {
+.blood:hover {
+  filter: drop-shadow(0 0 3px red) brightness(130%);
+}
+
+.blood span:nth-child(1) {
   background-image: url(/imgs/Blood.png);
 }
 
-.blood-unfilled {
+.blood span:nth-child(2) {
   background-image: url(/imgs/Blood-Empty.png);
 }
 
-span.willpower {
+.blood-filled span:nth-child(2) {
+  animation-direction: reverse;
+  opacity: 0;
+}
+
+.blood-unfilled span:nth-child(1) {
+  animation-direction: reverse;
+  opacity: 0;
+}
+
+.willpower {
   display: inline-block;
   width: 20px;
   height: 20px;
   margin-left: 1px;
   margin-right: 1px;
   cursor: pointer;
+  position: relative; /* For the span child elements using position absolute */
+}
+
+.willpower span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  animation: crossfade 1s forwards;
   background-size: contain;
 }
 
-.willpower-filled {
+.willpower span:nth-child(1) {
   background-image: url(/imgs/Willpower.png);
 }
 
-.willpower-unfilled {
+.willpower span:nth-child(2) {
   background-image: url(/imgs/Willpower-Empty.png);
 }
 
+.willpower-filled span:nth-child(2) {
+  animation-direction: reverse;
+  opacity: 0;
+}
+
+.willpower-unfilled span:nth-child(1) {
+  animation-direction: reverse;
+  opacity: 0;
+}
 html {
   min-height: 100%;
 }
