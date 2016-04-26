@@ -35,8 +35,8 @@
 
     node.attr('vampireId', data.id);
     node.find(".name").html(data.name);
-    makeClickableCounterElements(node.find(".bloodContainer"), 'Blood', 'blood', 'blood');
-    makeClickableCounterElements(node.find(".willpowerContainer"), 'Willpower', 'willpower', 'willpower');
+    makeClickableCounterElements(node.find(".bloodContainer"), 'Blood', 'blood', 'blood', 'maxBlood');
+    makeClickableCounterElements(node.find(".willpowerContainer"), 'Willpower', 'willpower', 'willpower', 'maxWillpower');
     node.find('.vampireDay').val(data.day);
     node.find('.vampireNotes').val(data.notes);
     node.find('.vampireNotes').trigger("input"); //Resize
@@ -92,22 +92,46 @@
     return vampires[$(element).closest('tr').attr('vampireId')];
   }
 
-  var makeClickableCounterElements = function(container, label, className, dataKey) {
-    container.html("<div class='col-md-3'><strong>" + label + ": </strong></div><div class='col-md-8'><span class='" + className + "-filled-container'></span><span class='" + className + "-unfilled-container'></span></div>");
+  var makeClickableCounterElements = function(container, label, className, dataKey, dataMaxKey) {
+    container.html("<div class='col-md-3'><strong>" + label + ": </strong></div><div class='col-md-8'><span class='" + className + "-filled-container'></span><span class='" + className + "-unfilled-container'></span><span class='counter-max-container'><span class='" + className + "-plus glyphicon glyphicon-plus counter-plus' /> <span class='" + className + "-minus counter-minus glyphicon glyphicon-minus' /></span></div>");
     var filledContainer = container.find("." + className + "-filled-container");
     var unfilledContainer = container.find("." + className + "-unfilled-container");
     var vamp = getVampire(container);
-    var counter = vamp.data[dataKey];
-    var MAX = 10;
-    for (i = 1; i <= counter; i++) {
+    for (i = 1; i <= vamp.data[dataKey]; i++) {
       filledContainer.append("<span class='" + className + " " + className + "-filled' num='" + i + "'><span /><span /></span>");
     }
-    for (i = counter + 1; i <= MAX; i++) {
+    for (i = vamp.data[dataKey] + 1; i <= vamp.data[dataMaxKey]; i++) {
       unfilledContainer.append("<span class='" + className + " " + className + "-unfilled' num='" + i + "'><span /><span /></span>");
     }
   };
 
-  var makeClickableCounterEvents = function(className, dataKey) {
+  var makeClickableCounterEvents = function(className, dataKey, maxDataKey) {
+    rootNode.on("click", "." + className + "-plus", function(event) {
+      var vamp = getVampire(event.currentTarget);
+      vamp.data[maxDataKey]++;
+
+      var container = $(event.currentTarget).parent().parent();
+      var unfilledContainer = container.find("." + className + "-unfilled-container");
+      unfilledContainer.append("<span class='" + className + " " + className + "-unfilled' num='" + vamp.data[maxDataKey] + "'><span /><span /></span>");
+      
+      vamp.updateRemote();      
+    });
+
+    rootNode.on("click", "." + className + "-minus", function(event) {
+      var vamp = getVampire(event.currentTarget);
+
+      var container = $(event.currentTarget).parent().parent();
+      container.find("." + className).each(function() { 
+        if ($(this).attr('num') == vamp.data[maxDataKey]) {
+          $(this).remove();
+        }
+      });
+      
+      vamp.data[maxDataKey]--;
+      vamp.data[dataKey] = Math.min(vamp.data[dataKey], vamp.data[maxDataKey]);
+      vamp.updateRemote();      
+    });
+
     rootNode.on("click", "." + className, function(event) {
       var container = $(event.currentTarget).parent().parent();
       var filledContainer = container.children("." + className + "-filled-container");
@@ -196,8 +220,8 @@
     });
   });
 
-  makeClickableCounterEvents('blood', 'blood');
-  makeClickableCounterEvents('willpower', 'willpower');
+  makeClickableCounterEvents('blood', 'blood', 'maxBlood');
+  makeClickableCounterEvents('willpower', 'willpower', 'maxWillpower');
   makeEditableNames();
   makeDeleteEvents();
   makeCreateEvent();
